@@ -3,7 +3,6 @@ package com.github.evgeniievgenevich.microstore.web;
 import com.github.evgeniievgenevich.microstore.dto.ProductCreateDto;
 import com.github.evgeniievgenevich.microstore.dto.ProductDetailDto;
 import com.github.evgeniievgenevich.microstore.dto.ProductShortDto;
-import com.github.evgeniievgenevich.microstore.model.Product;
 import com.github.evgeniievgenevich.microstore.service.ProductService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;

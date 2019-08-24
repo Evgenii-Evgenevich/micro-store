@@ -1,5 +1,6 @@
 package com.github.evgeniievgenevich.microstore.service;
 
+import com.github.evgeniievgenevich.microstore.dao.CharacteristicRepository;
 import com.github.evgeniievgenevich.microstore.dao.ProductRepository;
 import com.github.evgeniievgenevich.microstore.dto.ProductCreateDto;
 import com.github.evgeniievgenevich.microstore.dto.ProductDetailDto;
@@ -22,11 +23,13 @@ import java.util.NoSuchElementException;
  */
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
+    private final CharacteristicRepository characteristicRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.repository = productRepository;
+    public ProductServiceImpl(ProductRepository productRepository, CharacteristicRepository characteristicRepository) {
+        this.productRepository = productRepository;
+        this.characteristicRepository = characteristicRepository;
     }
 
     private static NoSuchElementException notFound(ObjectId id) {
@@ -36,30 +39,43 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDetailDto create(ProductCreateDto createDto) {
-        return new ProductDetailDto(this.repository.save(createDto.to(new Product())));
+        Product product = this.productRepository.save(createDto.to(new Product()));
+        return new ProductDetailDto(
+                product,
+                this.characteristicRepository.saveAll(createDto.characteristicData(product))
+        );
     }
 
     @Override
     @Transactional
     public ProductDetailDto update(ObjectId id, ProductCreateDto dto) {
-        return new ProductDetailDto(this.repository.save(dto.to(this.repository.findById(id).orElseThrow(() -> notFound(id)))));
+        Product product = this.productRepository.save(dto.to(this.productRepository.findById(id).orElseThrow(() -> notFound(id))));
+        this.characteristicRepository.deleteByIdProduct(product);
+        return new ProductDetailDto(
+                product,
+                this.characteristicRepository.saveAll(dto.characteristicData(product))
+        );
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductDetailDto product(ObjectId id) {
-        return new ProductDetailDto(this.repository.findById(id).orElseThrow(() -> notFound(id)));
+        Product product = this.productRepository.findById(id).orElseThrow(() -> notFound(id));
+        return new ProductDetailDto(
+                product,
+                this.characteristicRepository.findByIdProduct(product)
+        );
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductShortDto> products(int page, int count) {
-        return this.repository.findByOrderByTitle(PageRequest.of(page, count)).map(ProductShortDto::new);
+        return this.productRepository.findBy(PageRequest.of(page, count)).map(ProductShortDto::new);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductShortDto> findByTitle(String titleContainingIgnoreCase, int page, int count) {
-        return this.repository.findByTitleContainingIgnoreCaseOrderByTitle(titleContainingIgnoreCase, PageRequest.of(page, count)).map(ProductShortDto::new);
+        return this.productRepository.findByTitleContainingIgnoreCase(titleContainingIgnoreCase, PageRequest.of(page, count)).map(ProductShortDto::new);
     }
 }

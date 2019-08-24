@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * Product Short Data Transfer Object
- * Товар
+ * товар
  *
  * @author Evgenii Evgenevich
  */
@@ -16,9 +16,6 @@ public class ProductShortDto {
     private String title;
 
     private String description;
-
-    public ProductShortDto() {
-    }
 
     public ProductShortDto(Product product) {
         this.id = product.getId().toString();

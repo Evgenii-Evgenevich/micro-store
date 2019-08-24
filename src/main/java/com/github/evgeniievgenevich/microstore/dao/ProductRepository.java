@@ -10,7 +10,6 @@ import java.util.Optional;
 
 /**
  * Product Data Access Object
- * Товар
  *
  * @author Evgenii Evgenevich
  */
@@ -19,7 +18,7 @@ public interface ProductRepository extends Repository<Product, ObjectId> {
 
     Optional<Product> findById(ObjectId id);
 
-    Page<Product> findByOrderByTitle(Pageable pageable);
+    Page<Product> findBy(Pageable pageable);
 
-    Page<Product> findByTitleContainingIgnoreCaseOrderByTitle(String titleContainingIgnoreCase, Pageable pageable);
+    Page<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase, Pageable pageable);
 }
