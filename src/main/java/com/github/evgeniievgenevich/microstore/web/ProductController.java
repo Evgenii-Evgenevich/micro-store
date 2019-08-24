@@ -3,6 +3,7 @@ package com.github.evgeniievgenevich.microstore.web;
 import com.github.evgeniievgenevich.microstore.dto.ProductCreateDto;
 import com.github.evgeniievgenevich.microstore.model.Product;
 import com.github.evgeniievgenevich.microstore.service.ProductService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,17 @@ public class ProductController {
 
     @PostMapping
     public Product create(@RequestBody ProductCreateDto createDto) {
-        return this.service.save(createDto.to(new Product()));
+        return this.service.create(createDto);
+    }
+
+    @PostMapping("/{id}")
+    public Product update(@PathVariable("id") ObjectId id, @RequestBody ProductCreateDto createDto) {
+        return this.service.update(id, createDto);
+    }
+
+    @GetMapping("/{id}")
+    public Product product(@PathVariable("id") ObjectId id) {
+        return this.service.product(id);
     }
 
     @RequestMapping(method = {GET, POST}, value = "/{page}/{count}")
