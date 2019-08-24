@@ -1,7 +1,8 @@
 package com.github.evgeniievgenevich.microstore.service;
 
 import com.github.evgeniievgenevich.microstore.dto.ProductCreateDto;
-import com.github.evgeniievgenevich.microstore.model.Product;
+import com.github.evgeniievgenevich.microstore.dto.ProductDetailDto;
+import com.github.evgeniievgenevich.microstore.dto.ProductShortDto;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 
@@ -12,13 +13,13 @@ import org.springframework.data.domain.Page;
  * @author Evgenii Evgenevich
  */
 public interface ProductService {
-    Product create(ProductCreateDto createDto);
+    ProductDetailDto create(ProductCreateDto createDto);
 
-    Product update(ObjectId id, ProductCreateDto dto);
+    ProductDetailDto update(ObjectId id, ProductCreateDto dto);
 
-    Product product(ObjectId id);
+    ProductDetailDto product(ObjectId id);
 
-    Page<Product> products(int page, int count);
+    Page<ProductShortDto> products(int page, int count);
 
-    Page<Product> findByTitle(String titleContainingIgnoreCase, int page, int count);
+    Page<ProductShortDto> findByTitle(String titleContainingIgnoreCase, int page, int count);
 }

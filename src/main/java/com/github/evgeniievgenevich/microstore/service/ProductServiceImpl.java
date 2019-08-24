@@ -2,6 +2,8 @@ package com.github.evgeniievgenevich.microstore.service;
 
 import com.github.evgeniievgenevich.microstore.dao.ProductRepository;
 import com.github.evgeniievgenevich.microstore.dto.ProductCreateDto;
+import com.github.evgeniievgenevich.microstore.dto.ProductDetailDto;
+import com.github.evgeniievgenevich.microstore.dto.ProductShortDto;
 import com.github.evgeniievgenevich.microstore.model.Product;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,31 +35,31 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product create(ProductCreateDto createDto) {
-        return this.repository.save(createDto.to(new Product()));
+    public ProductDetailDto create(ProductCreateDto createDto) {
+        return new ProductDetailDto(this.repository.save(createDto.to(new Product())));
     }
 
     @Override
     @Transactional
-    public Product update(ObjectId id, ProductCreateDto dto) {
-        return this.repository.save(dto.to(this.repository.findById(id).orElseThrow(() -> notFound(id))));
+    public ProductDetailDto update(ObjectId id, ProductCreateDto dto) {
+        return new ProductDetailDto(this.repository.save(dto.to(this.repository.findById(id).orElseThrow(() -> notFound(id)))));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Product product(ObjectId id) {
-        return this.repository.findById(id).orElseThrow(() -> notFound(id));
+    public ProductDetailDto product(ObjectId id) {
+        return new ProductDetailDto(this.repository.findById(id).orElseThrow(() -> notFound(id)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Product> products(int page, int count) {
-        return this.repository.findByOrderByTitle(PageRequest.of(page, count));
+    public Page<ProductShortDto> products(int page, int count) {
+        return this.repository.findByOrderByTitle(PageRequest.of(page, count)).map(ProductShortDto::new);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Product> findByTitle(String titleContainingIgnoreCase, int page, int count) {
-        return this.repository.findByTitleContainingIgnoreCaseOrderByTitle(titleContainingIgnoreCase, PageRequest.of(page, count));
+    public Page<ProductShortDto> findByTitle(String titleContainingIgnoreCase, int page, int count) {
+        return this.repository.findByTitleContainingIgnoreCaseOrderByTitle(titleContainingIgnoreCase, PageRequest.of(page, count)).map(ProductShortDto::new);
     }
 }
