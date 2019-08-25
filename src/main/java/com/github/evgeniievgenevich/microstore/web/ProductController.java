@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -55,5 +57,15 @@ public class ProductController {
     @GetMapping("/characteristic-key")
     public Set<String> characteristicKeySet() {
         return this.service.characteristicKeySet();
+    }
+
+    @PostMapping("/characteristic-key")
+    public List<ProductShortDto> findByKeys(@RequestBody List<String> keys) {
+        return this.service.findByKeys(keys);
+    }
+
+    @PostMapping("/characteristic-value")
+    public List<ProductShortDto> findByCharacteristic(@RequestBody Map<String, Object> characteristic) {
+        return this.service.findByCharacteristic(characteristic);
     }
 }

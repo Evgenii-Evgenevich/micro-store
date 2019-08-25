@@ -15,10 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Product Service
@@ -96,10 +94,29 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Set<String> characteristicKeySet() {
-        List<Key> all = this.keyRepository.findAll();
-        if (all == null) return null;
-        Set<String> keySet = new HashSet<>(all.size());
-        all.forEach(e -> keySet.add(e.getId()));
+        List<Key> keyList = this.keyRepository.findAll();
+        if (keyList == null) return null;
+        Set<String> keySet = new HashSet<>(keyList.size());
+        keyList.forEach(e -> keySet.add(e.getId()));
         return keySet;
+    }
+
+    @Override
+    public List<ProductShortDto> findByKeys(Collection<String> keys) {
+        return this.characteristicRepository.findByIdKeyIdInOrderByIdProductId(keys)
+                .map(c -> new ProductShortDto(c.getId().getProduct()))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductShortDto> findByCharacteristic(Map<String, Object> characteristic) {
+        return characteristic.entrySet().parallelStream()
+                .flatMap(e -> this.characteristicRepository.findByIdKeyIdAndValue(e.getKey(), e.getValue()))
+                .map(c -> c.getId().getProduct())
+                .distinct()
+                .sorted(Comparator.comparing(Product::getId))
+                .map(ProductShortDto::new)
+                .collect(Collectors.toList());
     }
 }
