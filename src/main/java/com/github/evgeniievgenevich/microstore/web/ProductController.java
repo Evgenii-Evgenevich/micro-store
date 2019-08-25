@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -48,5 +50,10 @@ public class ProductController {
         return titleContainingIgnoreCase == null
                 ? this.service.products(page, count)
                 : this.service.findByTitle(titleContainingIgnoreCase, page, count);
+    }
+
+    @GetMapping("/characteristic-key")
+    public Set<String> characteristicKeySet() {
+        return this.service.characteristicKeySet();
     }
 }

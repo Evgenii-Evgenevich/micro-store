@@ -6,6 +6,8 @@ import com.github.evgeniievgenevich.microstore.dto.ProductShortDto;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 
+import java.util.Set;
+
 /**
  * Product Service
  * Товар
@@ -22,4 +24,6 @@ public interface ProductService {
     Page<ProductShortDto> products(int page, int count);
 
     Page<ProductShortDto> findByTitle(String titleContainingIgnoreCase, int page, int count);
+
+    Set<String> characteristicKeySet();
 }

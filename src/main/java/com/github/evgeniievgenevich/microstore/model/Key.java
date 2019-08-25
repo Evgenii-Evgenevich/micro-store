@@ -7,22 +7,15 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Product Characteristic
- * параметры товара
+ * Product Characteristic Key
  *
  * @author Evgenii Evgenevich
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("product_characteristic")
-public class CharacteristicData {
+@Document("product_characteristic_key")
+public class Key {
     @Id
-    private CharacteristicId id;
-
-    private Object value;
-
-    public CharacteristicData(Product product, Key key, Object value) {
-        this(new CharacteristicId(product, key), value);
-    }
+    private String id;
 }

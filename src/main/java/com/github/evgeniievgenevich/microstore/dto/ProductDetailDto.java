@@ -37,7 +37,7 @@ public class ProductDetailDto {
         this.description = product.getDescription();
         if (!CollectionUtils.isEmpty(characteristicList)) {
             this.characteristic = new HashMap<>(characteristicList.size());
-            characteristicList.forEach(data -> this.characteristic.put(data.getId().getKey(), data.getValue()));
+            characteristicList.forEach(data -> this.characteristic.put(data.getId().getKey().getId(), data.getValue()));
         }
     }
 }

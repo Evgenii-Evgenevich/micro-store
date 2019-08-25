@@ -1,6 +1,7 @@
 package com.github.evgeniievgenevich.microstore.dto;
 
 import com.github.evgeniievgenevich.microstore.model.CharacteristicData;
+import com.github.evgeniievgenevich.microstore.model.Key;
 import com.github.evgeniievgenevich.microstore.model.Product;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
@@ -8,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Product Create Data Transfer Object
@@ -29,10 +31,10 @@ public class ProductCreateDto {
         return product;
     }
 
-    public List<CharacteristicData> characteristicData(Product product) {
+    public List<CharacteristicData> characteristicData(Product product, Function<String, Key> key) {
         if (CollectionUtils.isEmpty(this.characteristic)) return null;
         List<CharacteristicData> data = new ArrayList<>(this.characteristic.size());
-        this.characteristic.forEach((key, value) -> data.add(new CharacteristicData(product, key, value)));
+        this.characteristic.forEach((k, v) -> data.add(new CharacteristicData(product, key.apply(k), v)));
         return data;
     }
 }
