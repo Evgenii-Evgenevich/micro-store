@@ -25,7 +25,5 @@ public interface CharacteristicRepository extends Repository<CharacteristicData,
 
     Stream<CharacteristicData> findByIdKeyIdAndValue(String key, Object value);
 
-    Stream<CharacteristicData> findByIdProductTitleContainingIgnoreCaseAndIdKeyIdInOrderByIdProductId(String titleContainingIgnoreCase, Collection<String> keys);
-
     Stream<CharacteristicData> findByIdProductTitleContainingIgnoreCaseAndIdKeyIdAndValue(String titleContainingIgnoreCase, String key, Object value);
 }

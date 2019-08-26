@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Product Data Access Object
@@ -21,4 +22,8 @@ public interface ProductRepository extends Repository<Product, ObjectId> {
     Page<Product> findBy(Pageable pageable);
 
     Page<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase, Pageable pageable);
+
+    Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase);
+
+    Stream<Product> findAll();
 }

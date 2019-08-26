@@ -2,6 +2,7 @@ package com.github.evgeniievgenevich.microstore.web;
 
 import com.github.evgeniievgenevich.microstore.dto.ProductCreateDto;
 import com.github.evgeniievgenevich.microstore.dto.ProductDetailDto;
+import com.github.evgeniievgenevich.microstore.dto.ProductFilterDto;
 import com.github.evgeniievgenevich.microstore.dto.ProductShortDto;
 import com.github.evgeniievgenevich.microstore.service.ProductService;
 import org.bson.types.ObjectId;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
@@ -67,5 +69,10 @@ public class ProductController {
     @PostMapping("/characteristic-value")
     public List<ProductShortDto> findByCharacteristic(@RequestBody Map<String, Object> characteristic) {
         return this.service.findByCharacteristic(characteristic);
+    }
+
+    @RequestMapping(method = {GET, PATCH})
+    public List<ProductShortDto> findByFilter(@RequestBody(required = false) ProductFilterDto filterDto) {
+        return this.service.findByFilter(filterDto);
     }
 }
