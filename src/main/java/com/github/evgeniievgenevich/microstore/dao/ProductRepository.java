@@ -4,8 +4,11 @@ import com.github.evgeniievgenevich.microstore.model.Product;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.Repository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -14,7 +17,7 @@ import java.util.stream.Stream;
  *
  * @author Evgenii Evgenevich
  */
-public interface ProductRepository extends Repository<Product, ObjectId> {
+public interface ProductRepository extends Repository<Product, ObjectId>, ProductDao {
     Product save(Product product);
 
     Optional<Product> findById(ObjectId id);
@@ -26,4 +29,7 @@ public interface ProductRepository extends Repository<Product, ObjectId> {
     Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase);
 
     Stream<Product> findAll();
+
+    @Query("{'characteristic.?0':{$exists: true}}")
+    Page<Product> findByCharacteristicKey(String key, Pageable pageable);
 }
