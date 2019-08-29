@@ -229,6 +229,7 @@ curl -X GET "http://localhost:8000/api/product/characteristic-key" -H "accept: a
 {
   "string": {}
 }
+```
 ```bash
 curl -X POST "http://localhost:8000/api/product/characteristic-value" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"key2\":\"42\"}"
 ```
