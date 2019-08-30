@@ -3,9 +3,6 @@ package com.github.evgeniievgenevich.microstore.dto;
 import com.github.evgeniievgenevich.microstore.model.Product;
 import com.mongodb.DBObject;
 import lombok.Data;
-import org.bson.types.ObjectId;
-
-import java.util.Map;
 
 /**
  * Product Short Data Transfer Object

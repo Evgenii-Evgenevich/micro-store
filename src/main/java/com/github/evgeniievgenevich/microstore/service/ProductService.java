@@ -14,7 +14,6 @@ import java.util.Set;
 
 /**
  * Product Service
- * Товар
  *
  * @author Evgenii Evgenevich
  */

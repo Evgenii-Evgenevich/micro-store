@@ -1,7 +1,10 @@
 package com.github.evgeniievgenevich.microstore.model;
 
 import com.mongodb.DBObject;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,7 +33,7 @@ public class Product {
     private Map<String, Object> characteristic;
 
     public Product(DBObject object) {
-        this.id = (ObjectId)object.get("_id");
+        this.id = (ObjectId) object.get("_id");
         this.title = (String) object.get("title");
         this.description = (String) object.get("description");
         this.characteristic = (Map<String, Object>) object.get("characteristic");

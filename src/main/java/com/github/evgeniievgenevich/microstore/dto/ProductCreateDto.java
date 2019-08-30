@@ -1,13 +1,13 @@
 package com.github.evgeniievgenevich.microstore.dto;
 
-import com.github.evgeniievgenevich.microstore.model.CharacteristicData;
 import com.github.evgeniievgenevich.microstore.model.Key;
 import com.github.evgeniievgenevich.microstore.model.Product;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
-import springfox.documentation.schema.Maps;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**

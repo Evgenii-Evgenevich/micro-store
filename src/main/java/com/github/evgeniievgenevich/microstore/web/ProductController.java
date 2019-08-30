@@ -14,13 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Product Controller
- * Товар
  *
  * @author Evgenii Evgenevich
  */
