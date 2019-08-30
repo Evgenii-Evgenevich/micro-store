@@ -320,7 +320,6 @@ curl -X GET "http://localhost:8000/api/product" -H "accept: application/json"
   "characteristic": {
     "string": {}
   },
-  "description": "string",
   "title": "string"
 }
 ```
