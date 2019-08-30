@@ -2,16 +2,20 @@ package com.github.evgeniievgenevich.microstore.dao;
 
 import com.github.evgeniievgenevich.microstore.model.Product;
 import com.mongodb.BasicDBObject;
-import com.mongodb.QueryBuilder;]
+import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.MongoCollection;
+import jdk.nashorn.internal.runtime.regexp.RegExp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ProductDaoImpl implements ProductDao {
     private final MongoCollection collection;
@@ -22,7 +26,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Product> findByCharacteristicKeyIn(Collection<String> keys) {
+    public <Product> List<Product> findByCharacteristicKeyIn(Collection<String> keys, Function<DBObject, Product> mapper) {
         QueryBuilder queryBuilder = QueryBuilder.start();
         keys.forEach(key -> {
             String characteristicKey = "characteristic." + key;
@@ -32,12 +36,13 @@ public class ProductDaoImpl implements ProductDao {
                             .get()
             );
         });
-        MongoIterable<Product> products = collection.find((BasicDBObject)queryBuilder.get(), Product.class);
-        return products.into(new ArrayList<>());
+        DBObject query = queryBuilder.get();
+        System.out.println(query);
+        MongoIterable<DBObject> products = collection.find((BasicDBObject)query, DBObject.class);
+        return StreamSupport.stream(products.spliterator(), false).map(mapper).collect(Collectors.toList());
     }
 
-    @Override
-    public List<Product> findByCharacteristicContains(Map<String, Object> characteristic) {
+    private DBObject queryByCharacteristicContains(Map<String, Object> characteristic) {
         QueryBuilder queryBuilder = QueryBuilder.start();
         characteristic.forEach((key, value) -> {
             String characteristicKey = "characteristic." + key;
@@ -47,7 +52,26 @@ public class ProductDaoImpl implements ProductDao {
                             .get()
             );
         });
-        MongoIterable<Product> products = collection.distinct("id", (BasicDBObject)queryBuilder.get(), Product.class);
-        return products.into(new ArrayList<>());
+        return queryBuilder.get();
+    }
+
+    @Override
+    public <Product> List<Product> findByCharacteristicContains(Map<String, Object> characteristic, Function<DBObject, Product> mapper) {
+        DBObject query = queryByCharacteristicContains(characteristic);
+        System.out.println(query);
+        MongoIterable<DBObject> products = collection.find((BasicDBObject)query, DBObject.class);
+        return StreamSupport.stream(products.spliterator(), false).map(mapper).collect(Collectors.toList());
+    }
+
+    @Override
+    public <Product> List<Product> findByTitleContainingIgnoreCaseAndCharacteristicContains(String titleContainingIgnoreCase, Map<String, Object> characteristic, Function<DBObject, Product> mapper) {
+        DBObject containingIgnoreCase = new BasicDBObject().append("$regex", ".*"+titleContainingIgnoreCase+".*").append("$options", 'i');
+        DBObject query = QueryBuilder.start().and(
+                QueryBuilder.start().and("title").is(containingIgnoreCase).get(),
+                queryByCharacteristicContains(characteristic)
+        ).get();
+        System.out.println(query);
+        MongoIterable<DBObject> products = collection.find((BasicDBObject)query, DBObject.class);
+        return StreamSupport.stream(products.spliterator(), false).map(mapper).collect(Collectors.toList());
     }
 }

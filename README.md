@@ -312,3 +312,29 @@ curl -X GET "http://localhost:8000/api/product" -H "accept: application/json"
 
 ```
 
+- Get a list of filtered products
+  - PATCH: `http://localhost:8000/api/product`
+  - Example Request Body
+```json
+{
+  "characteristic": {
+    "string": {}
+  },
+  "description": "string",
+  "title": "string"
+}
+```
+```bash
+curl -X PATCH "http://localhost:8000/api/product" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"characteristic\": { \"key1\": \"23\" }, \"title\": \"phone\" }"
+```
+  - Example Response Body
+```json
+[
+  {
+    "id": "5d6645ef86fc7828cc13bf7a",
+    "title": "smartphone",
+    "description": "a product 5"
+  }
+]
+```
+

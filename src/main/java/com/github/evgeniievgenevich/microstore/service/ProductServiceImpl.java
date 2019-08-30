@@ -33,13 +33,16 @@ import java.util.stream.Stream;
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final CharacteristicRepository characteristicRepository;
+    //private final CharacteristicRepository characteristicRepository;
     private final KeyRepository keyRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CharacteristicRepository characteristicRepository, KeyRepository keyRepository) {
+    public ProductServiceImpl(ProductRepository productRepository
+            //, CharacteristicRepository characteristicRepository
+            , KeyRepository keyRepository
+    ) {
         this.productRepository = productRepository;
-        this.characteristicRepository = characteristicRepository;
+        //this.characteristicRepository = characteristicRepository;
         this.keyRepository = keyRepository;
     }
 
@@ -58,22 +61,26 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDetailDto create(ProductCreateDto createDto) {
-        Product product = this.productRepository.save(createDto.to(new Product()));
-        return new ProductDetailDto(
-                product,
-                characteristicRepository.saveAll(createDto.characteristicData(product, this::key))
-        );
+//        Product product = this.productRepository.save(createDto.to(new Product()));
+//        List<CharacteristicData> characteristicData = createDto.characteristicData(product, this::key);
+//        return new ProductDetailDto(
+//                product,
+//                characteristicData == null ? null : characteristicRepository.saveAll(characteristicData)
+//        );
+        return new ProductDetailDto(this.productRepository.save(createDto.toDocument(new Product(), this::key)));
     }
 
     @Override
     @Transactional
     public ProductDetailDto update(ObjectId id, ProductCreateDto dto) {
-        Product product = productRepository.save(dto.to(this.productRepository.findById(id).orElseThrow(() -> notFound(id))));
-        characteristicRepository.deleteByIdProduct(product);
-        return new ProductDetailDto(
-                product,
-                characteristicRepository.saveAll(dto.characteristicData(product, this::key))
-        );
+//        Product product = productRepository.save(dto.to(this.productRepository.findById(id).orElseThrow(() -> notFound(id))));
+//        List<CharacteristicData> characteristicData = dto.characteristicData(product, this::key);
+//        characteristicRepository.deleteByIdProduct(product);
+//        return new ProductDetailDto(
+//                product,
+//                characteristicData == null ? null : characteristicRepository.saveAll(characteristicData)
+//        );
+        return new ProductDetailDto(this.productRepository.save(dto.toDocument(this.productRepository.findById(id).orElseThrow(() -> notFound(id)), this::key)));
     }
 
     @Override
@@ -111,10 +118,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductShortDto> findByKeys(Collection<String> keys) {
-        return characteristicRepository.findByIdKeyIdInOrderByIdProductId(keys)
-                .map(c -> new ProductShortDto(c.getId().getProduct()))
-                .distinct()
-                .collect(Collectors.toList());
+//        return characteristicRepository.findByIdKeyIdInOrderByIdProductId(keys)
+//                .map(c -> new ProductShortDto(c.getId().getProduct()))
+//                .distinct()
+//                .collect(Collectors.toList());
+        return productRepository.findByCharacteristicKeyIn(keys, ProductShortDto::new);
     }
 
     private Stream<Product> findByCharacteristic(Map<String, Object> characteristic, BiFunction<String, Object, Stream<CharacteristicData>> entry) {
@@ -128,28 +136,38 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductShortDto> findByCharacteristic(Map<String, Object> characteristic) {
-        return findByCharacteristic(characteristic, characteristicRepository::findByIdKeyIdAndValue)
-                .map(ProductShortDto::new)
-                .collect(Collectors.toList());
+//        return findByCharacteristic(characteristic, characteristicRepository::findByIdKeyIdAndValue)
+//                .map(ProductShortDto::new)
+//                .collect(Collectors.toList());
+        return productRepository.findByCharacteristicContains(characteristic, ProductShortDto::new);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ProductShortDto> findByFilter(ProductFilterDto filterDto) {
-        Stream<Product> productStream;
+//        Stream<Product> productStream;
+//        if (filterDto == null || (!StringUtils.hasText(filterDto.getTitle()) && CollectionUtils.isEmpty(filterDto.getCharacteristic()))) {
+//            productStream = productRepository.findAll();
+//        } else if (StringUtils.hasText(filterDto.getTitle()) && CollectionUtils.isEmpty(filterDto.getCharacteristic())) {
+//            productStream = productRepository.findByTitleContainingIgnoreCase(filterDto.getTitle());
+//        } else if (!StringUtils.hasText(filterDto.getTitle()) && !CollectionUtils.isEmpty(filterDto.getCharacteristic())) {
+//            productStream = findByCharacteristic(filterDto.getCharacteristic(), characteristicRepository::findByIdKeyIdAndValue);
+//        } else {
+//            productStream = findByCharacteristic(filterDto.getCharacteristic(), (k, v) ->
+//                    characteristicRepository.findByIdProductTitleContainingIgnoreCaseAndIdKeyIdAndValue(filterDto.getTitle(), k, v)
+//            );
+//        }
+//        return productStream
+//                .map(ProductShortDto::new)
+//                .collect(Collectors.toList());
         if (filterDto == null || (!StringUtils.hasText(filterDto.getTitle()) && CollectionUtils.isEmpty(filterDto.getCharacteristic()))) {
-            productStream = productRepository.findAll();
+            return productRepository.findAll().map(ProductShortDto::new).collect(Collectors.toList());
         } else if (StringUtils.hasText(filterDto.getTitle()) && CollectionUtils.isEmpty(filterDto.getCharacteristic())) {
-            productStream = productRepository.findByTitleContainingIgnoreCase(filterDto.getTitle());
+            return productRepository.findByTitleContainingIgnoreCase(filterDto.getTitle()).map(ProductShortDto::new).collect(Collectors.toList());
         } else if (!StringUtils.hasText(filterDto.getTitle()) && !CollectionUtils.isEmpty(filterDto.getCharacteristic())) {
-            productStream = findByCharacteristic(filterDto.getCharacteristic(), characteristicRepository::findByIdKeyIdAndValue);
+            return productRepository.findByCharacteristicContains(filterDto.getCharacteristic(), ProductShortDto::new);
         } else {
-            productStream = findByCharacteristic(filterDto.getCharacteristic(), (k, v) ->
-                    characteristicRepository.findByIdProductTitleContainingIgnoreCaseAndIdKeyIdAndValue(filterDto.getTitle(), k, v)
-            );
+            return productRepository.findByTitleContainingIgnoreCaseAndCharacteristicContains(filterDto.getTitle(), filterDto.getCharacteristic(), ProductShortDto::new);
         }
-        return productStream
-                .map(ProductShortDto::new)
-                .collect(Collectors.toList());
     }
 }

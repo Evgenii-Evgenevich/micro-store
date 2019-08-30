@@ -29,7 +29,4 @@ public interface ProductRepository extends Repository<Product, ObjectId>, Produc
     Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase);
 
     Stream<Product> findAll();
-
-    @Query("{'characteristic.?0':{$exists: true}}")
-    Page<Product> findByCharacteristicKey(String key, Pageable pageable);
 }
