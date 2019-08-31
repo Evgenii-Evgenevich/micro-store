@@ -51,7 +51,7 @@ public class ProductDaoImpl implements ProductDao {
     public Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase) {
         return entityManager.createQuery("select p from Product p where upper(p.title) like upper(:s)", Product.class)
                 .setParameter("s", '%' + titleContainingIgnoreCase + '%')
-                .getResultStream();
+                .getResultList().stream();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ProductDaoImpl implements ProductDao {
     public Stream<Product> findByCharacteristicKeyIn(Collection<String> keys) {
         return entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.key in :k", Product.class)
                 .setParameter("k", keys)
-                .getResultStream();
+                .getResultList().stream();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ProductDaoImpl implements ProductDao {
                         entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.key = :k and c.value = :v", Product.class)
                                 .setParameter("k", e.getKey())
                                 .setParameter("v", e.getValue())
-                                .getResultStream()
+                                .getResultList().stream()
                 )
                 .distinct()
                 .sorted(Comparator.comparing(Product::getId));
@@ -104,7 +104,7 @@ public class ProductDaoImpl implements ProductDao {
                                 .setParameter("s", '%' + titleContainingIgnoreCase + '%')
                                 .setParameter("k", e.getKey())
                                 .setParameter("v", e.getValue())
-                                .getResultStream()
+                                .getResultList().stream()
                 )
                 .distinct()
                 .sorted(Comparator.comparing(Product::getId));
