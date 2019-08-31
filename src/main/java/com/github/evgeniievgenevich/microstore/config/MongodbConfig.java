@@ -6,7 +6,6 @@ import org.hibernate.ogm.datastore.mongodb.MongoDBDialect;
 import org.hibernate.ogm.jpa.HibernateOgmPersistence;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,12 +20,17 @@ import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Mongo DB Configuration
+ *
+ * @author Evgenii Evgenevich
+ */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
         basePackages = "com.github.evgeniievgenevich.microstore.dao"
 )
-public class MongdbConfig {
+public class MongodbConfig {
     @Value("${spring.data.mongodb.host}")
     private String host;
 

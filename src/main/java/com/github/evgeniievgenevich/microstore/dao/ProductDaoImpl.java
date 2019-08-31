@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Stream;
+
 /**
  * Product Data Access Object
  *
@@ -100,7 +101,7 @@ public class ProductDaoImpl implements ProductDao {
         return characteristic.entrySet()
                 .parallelStream()
                 .flatMap(e ->
-                        entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.product.title like upper(:s) and c.id.key = :k and c.value = :v", Product.class)
+                        entityManager.createQuery("select distinct c.id.product from CharacteristicData c where upper(c.id.product.title) like upper(:s) and c.id.key = :k and c.value = :v", Product.class)
                                 .setParameter("s", '%' + titleContainingIgnoreCase + '%')
                                 .setParameter("k", e.getKey())
                                 .setParameter("v", e.getValue())
