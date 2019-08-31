@@ -1,11 +1,12 @@
 package com.github.evgeniievgenevich.microstore.dao;
 
-import com.mongodb.DBObject;
+import com.github.evgeniievgenevich.microstore.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Product Data Access Object
@@ -13,9 +14,17 @@ import java.util.function.Function;
  * @author Evgenii Evgenevich
  */
 public interface ProductDao {
-    <Product> List<Product> findByCharacteristicKeyIn(Collection<String> keys, Function<DBObject, Product> mapper);
+    Stream<Product> streamAll();
 
-    <Product> List<Product> findByCharacteristicContains(Map<String, Object> characteristic, Function<DBObject, Product> mapper);
+    //Page<Product> findAll(Pageable pageable);
 
-    <Product> List<Product> findByTitleContainingIgnoreCaseAndCharacteristicContains(String titleContainingIgnoreCase, Map<String, Object> characteristic, Function<DBObject, Product> mapper);
+    Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase);
+
+    Page<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase, Pageable pageable);
+
+    Stream<Product> findByCharacteristicKeyIn(Collection<String> keys);
+
+    Stream<Product> findByCharacteristicContains(Map<String, String> characteristic);
+
+    Stream<Product> findByTitleContainingIgnoreCaseAndCharacteristicContains(String titleContainingIgnoreCase, Map<String, String> characteristic);
 }

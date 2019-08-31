@@ -1,15 +1,12 @@
 package com.github.evgeniievgenevich.microstore.model;
 
-import com.mongodb.DBObject;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Map;
+import javax.persistence.*;
+import java.util.List;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Product Data
@@ -17,25 +14,17 @@ import java.util.Map;
  *
  * @author Evgenii Evgenevich
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Document
+@Data
+@Entity
 public class Product {
     @Id
-    private ObjectId id;
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
     private String title;
 
     private String description;
 
-    private Map<String, Object> characteristic;
-
-    public Product(DBObject object) {
-        this.id = (ObjectId) object.get("_id");
-        this.title = (String) object.get("title");
-        this.description = (String) object.get("description");
-        this.characteristic = (Map<String, Object>) object.get("characteristic");
-    }
+    @OneToMany(mappedBy = "id.product")
+    private List<CharacteristicData> characteristic;
 }

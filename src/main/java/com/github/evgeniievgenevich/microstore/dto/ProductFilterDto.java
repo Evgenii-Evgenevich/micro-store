@@ -14,5 +14,5 @@ import java.util.Map;
 public class ProductFilterDto {
     private String title;
 
-    private Map<String, Object> characteristic;
+    private Map<String, String> characteristic;
 }

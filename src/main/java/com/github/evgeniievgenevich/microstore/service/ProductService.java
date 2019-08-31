@@ -32,7 +32,7 @@ public interface ProductService {
 
     List<ProductShortDto> findByKeys(Collection<String> keys);
 
-    List<ProductShortDto> findByCharacteristic(Map<String, Object> characteristic);
+    List<ProductShortDto> findByCharacteristic(Map<String, String> characteristic);
 
     List<ProductShortDto> findByFilter(ProductFilterDto filterDto);
 }

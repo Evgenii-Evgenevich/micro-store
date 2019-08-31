@@ -3,10 +3,9 @@ package com.github.evgeniievgenevich.microstore.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * Product Characteristic Key
@@ -16,8 +15,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("product_characteristic_key")
-public class Key implements Serializable {
+@Entity
+public class Key {
     @Id
     private String id;
 
