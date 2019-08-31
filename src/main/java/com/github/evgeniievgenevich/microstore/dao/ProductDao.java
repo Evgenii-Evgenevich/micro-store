@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public interface ProductDao {
     Stream<Product> streamAll();
 
-    //Page<Product> findAll(Pageable pageable);
+    Page<Product> findAll(Pageable pageable);
 
     Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase);
 

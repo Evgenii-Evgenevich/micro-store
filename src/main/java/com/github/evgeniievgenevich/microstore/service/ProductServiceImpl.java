@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -106,7 +105,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductDetailDto product(ObjectId id) {
-        return new ProductDetailDto(productRepository.findById(id).orElseThrow(() -> notFound(id)));
+        Product product = productRepository.findById(id).orElseThrow(() -> notFound(id));
+        return new ProductDetailDto(
+                product,
+                characteristicRepository.findByIdProduct(product)
+        );
     }
 
     @Override

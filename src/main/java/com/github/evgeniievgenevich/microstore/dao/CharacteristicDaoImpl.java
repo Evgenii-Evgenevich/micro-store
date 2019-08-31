@@ -22,7 +22,8 @@ public class CharacteristicDaoImpl implements CharacteristicDao {
 
     @Override
     public List<CharacteristicData> findByIdProduct(Product product) {
-        return entityManager.createQuery("select c from CharacteristicData c where c.id.product = ?1", CharacteristicData.class)
+        return entityManager.createQuery("select c from CharacteristicData c where c.id.product.id = :p", CharacteristicData.class)
+                .setParameter("p", product.getId())
                 .getResultList();
     }
 }

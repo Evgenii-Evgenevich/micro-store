@@ -27,40 +27,40 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Stream<Product> streamAll() {
-        return entityManager.createQuery("select p from Product p", Product.class).getResultStream();
+        return entityManager.createQuery("select p from Product p", Product.class).getResultList().stream();
     }
 
-//    @Override
-//    public Page<Product> findAll(Pageable pageable) {
-//        Long total = entityManager.createQuery("select count(p) from Product p", Long.class).getSingleResult();
-//        TypedQuery<Product> p = entityManager.createQuery("select p from Product p", Product.class);
-//        if (total != null && pageable.isPaged()) {
-//            return new PageImpl<>(
-//                    p
-//                            .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
-//                            .setMaxResults(pageable.getPageSize())
-//                            .getResultList(),
-//                    pageable,
-//                    total
-//            );
-//        }
-//        return new PageImpl<>(p.getResultList());
-//    }
+    @Override
+    public Page<Product> findAll(Pageable pageable) {
+        Long total = entityManager.createQuery("select count(p) from Product p", Long.class).getSingleResult();
+        TypedQuery<Product> p = entityManager.createQuery("select p from Product p", Product.class);
+        if (total != null && pageable.isPaged()) {
+            return new PageImpl<>(
+                    p
+                            .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
+                            .setMaxResults(pageable.getPageSize())
+                            .getResultList(),
+                    pageable,
+                    total
+            );
+        }
+        return new PageImpl<>(p.getResultList());
+    }
 
     @Override
     public Stream<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase) {
-        return entityManager.createQuery("select p from Product p where upper(p.title) like upper(?1)", Product.class)
-                .setParameter(1, '%' + titleContainingIgnoreCase + '%')
+        return entityManager.createQuery("select p from Product p where upper(p.title) like upper(:s)", Product.class)
+                .setParameter("s", '%' + titleContainingIgnoreCase + '%')
                 .getResultStream();
     }
 
     @Override
     public Page<Product> findByTitleContainingIgnoreCase(String titleContainingIgnoreCase, Pageable pageable) {
-        Long total = entityManager.createQuery("select count(p) from Product p where upper(p.title) like upper(?1)", Long.class)
-                .setParameter(1, '%' + titleContainingIgnoreCase + '%')
+        Long total = entityManager.createQuery("select count(p) from Product p where upper(p.title) like upper(:s)", Long.class)
+                .setParameter("s", '%' + titleContainingIgnoreCase + '%')
                 .getSingleResult();
-        TypedQuery<Product> p = entityManager.createQuery("select p from Product p where upper(p.title) like upper(?1)", Product.class)
-                .setParameter(1, '%' + titleContainingIgnoreCase + '%');
+        TypedQuery<Product> p = entityManager.createQuery("select p from Product p where upper(p.title) like upper(:s)", Product.class)
+                .setParameter("s", '%' + titleContainingIgnoreCase + '%');
         if (total != null && pageable.isPaged()) {
             return new PageImpl<>(
                     p
@@ -76,8 +76,8 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Stream<Product> findByCharacteristicKeyIn(Collection<String> keys) {
-        return entityManager.createQuery("select distinct c.product from CharacteristicData c where c.id.key in ?1", Product.class)
-                .setParameter(1, keys)
+        return entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.key in :k", Product.class)
+                .setParameter("k", keys)
                 .getResultStream();
     }
 
@@ -86,9 +86,9 @@ public class ProductDaoImpl implements ProductDao {
         return characteristic.entrySet()
                 .parallelStream()
                 .flatMap(e ->
-                        entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.key = ?1 and c.value = ?2", Product.class)
-                                .setParameter(1, e.getKey())
-                                .setParameter(2, e.getValue())
+                        entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.key = :k and c.value = :v", Product.class)
+                                .setParameter("k", e.getKey())
+                                .setParameter("v", e.getValue())
                                 .getResultStream()
                 )
                 .distinct()
@@ -100,10 +100,10 @@ public class ProductDaoImpl implements ProductDao {
         return characteristic.entrySet()
                 .parallelStream()
                 .flatMap(e ->
-                        entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.product.title like upper(?1) and c.key = ?2 and c.value = ?3", Product.class)
-                                .setParameter(1, '%' + titleContainingIgnoreCase + '%')
-                                .setParameter(2, e.getKey())
-                                .setParameter(3, e.getValue())
+                        entityManager.createQuery("select distinct c.id.product from CharacteristicData c where c.id.product.title like upper(:s) and c.id.key = :k and c.value = :v", Product.class)
+                                .setParameter("s", '%' + titleContainingIgnoreCase + '%')
+                                .setParameter("k", e.getKey())
+                                .setParameter("v", e.getValue())
                                 .getResultStream()
                 )
                 .distinct()

@@ -37,8 +37,7 @@ public class ProductDetailDto {
     }
 
     public ProductDetailDto(Product product, List<CharacteristicData> characteristicData) {
-        id = product.getId().toString();
-        //dateTime = LocalDateTime.ofEpochSecond(product.getId().getTimestamp(), 0, ZoneOffset.UTC);
+        setId(product.getId());
         title = product.getTitle();
         description = product.getDescription();
         if (!CollectionUtils.isEmpty(characteristicData)) {

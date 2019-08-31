@@ -64,7 +64,7 @@ public class ProductController {
     }
 
     @PostMapping("/characteristic-value")
-    public List<ProductShortDto> findByCharacteristic(@RequestBody Map<String, Object> characteristic) {
+    public List<ProductShortDto> findByCharacteristic(@RequestBody Map<String, String> characteristic) {
         return this.service.findByCharacteristic(characteristic);
     }
 

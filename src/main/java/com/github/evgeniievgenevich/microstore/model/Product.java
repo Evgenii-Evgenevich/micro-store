@@ -1,12 +1,11 @@
 package com.github.evgeniievgenevich.microstore.model;
 
-import lombok.*;
+import lombok.Data;
 import org.bson.types.ObjectId;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.List;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Product Data
@@ -18,13 +17,16 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class Product {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private ObjectId id = new ObjectId();
 
     private String title;
 
     private String description;
 
-    @OneToMany(mappedBy = "id.product")
-    private List<CharacteristicData> characteristic;
+//    @OneToMany(mappedBy = "id.product")
+//    private List<CharacteristicData> characteristic;
+
+    public List<CharacteristicData> getCharacteristic() {
+        return null;
+    }
 }
